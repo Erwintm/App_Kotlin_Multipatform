@@ -1,101 +1,110 @@
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 data class City(
     val name: String,
-    val country: String,
-    val time: String,
-    val difference: String
+    val time: String
 )
 
 @Composable
 fun App() {
 
-    val cities = listOf(
-        City("Mexico City", "Mexico", "17:40", "Local Time"),
-        City("New York", "USA", "19:40", "+2 Hours"),
-        City("London", "UK", "00:40", "+7 Hours"),
-        City("Tokyo", "Japan", "08:40", "+15 Hours")
-    )
+    var cityName by remember {
+        mutableStateOf("")
+    }
+
+    var cities by remember {
+        mutableStateOf(
+            listOf(
+                City("Mexico City", "17:40"),
+                City("New York", "19:40")
+            )
+        )
+    }
 
     MaterialTheme {
 
-        Surface(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFFF4F4F4))
+                .padding(20.dp)
         ) {
 
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
+            Text(
+                text = "World Clock",
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Bold
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            OutlinedTextField(
+                value = cityName,
+                onValueChange = {
+                    cityName = it
+                },
+                label = {
+                    Text("Enter city")
+                },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Button(
+                onClick = {
+
+                    if (cityName.isNotBlank()) {
+
+                        cities = cities + City(
+                            cityName,
+                            "00:00"
+                        )
+
+                        cityName = ""
+                    }
+                }
             ) {
+                Text("Add City")
+            }
 
-                Text(
-                    text = "World Clock",
-                    fontSize = 32.sp,
-                    fontWeight = FontWeight.Bold
-                )
+            Spacer(modifier = Modifier.height(20.dp))
 
-                Spacer(modifier = Modifier.height(20.dp))
+            LazyColumn {
 
-                LazyColumn {
+                items(cities) { city ->
 
-                    items(cities) { city ->
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 12.dp),
+                        shape = RoundedCornerShape(20.dp)
+                    ) {
 
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 16.dp),
-                            shape = RoundedCornerShape(20.dp)
+                        Column(
+                            modifier = Modifier.padding(20.dp)
                         ) {
 
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(20.dp)
-                            ) {
+                            Text(
+                                text = city.name,
+                                fontSize = 24.sp,
+                                fontWeight = FontWeight.Bold
+                            )
 
-                                Text(
-                                    text = city.name,
-                                    fontSize = 24.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
+                            Spacer(modifier = Modifier.height(10.dp))
 
-                                Text(
-                                    text = city.country,
-                                    fontSize = 16.sp,
-                                    color = Color.Gray
-                                )
-
-                                Spacer(modifier = Modifier.height(20.dp))
-
-                                Text(
-                                    text = city.time,
-                                    fontSize = 40.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-
-                                Spacer(modifier = Modifier.height(10.dp))
-
-                                Text(
-                                    text = city.difference,
-                                    fontSize = 16.sp,
-                                    color = Color(0xFF1565C0)
-                                )
-                            }
+                            Text(
+                                text = city.time,
+                                fontSize = 36.sp
+                            )
                         }
                     }
                 }
